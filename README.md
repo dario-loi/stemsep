@@ -34,7 +34,8 @@ A web application that separates audio into stems (vocals, drums, bass, guitar, 
    python app.py
    ```
 
-> [!WARNING] Running locally (or in a .venv) will automatically use CUDA if available. If you want to run it without GPU, change the line in `app.py`:
+> [!WARNING]
+> Running locally (or in a .venv) will automatically use CUDA if available. If you want to run it without GPU, change the line in `app.py`:
 > ```python
 > device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 > ```
@@ -73,7 +74,8 @@ A web application that separates audio into stems (vocals, drums, bass, guitar, 
 
 ## Spotify API Setup
 
-> [!INFO] While `spotify-dl` doesn't require API keys for downloading, it still needs them to access Spotify metadata.
+> [!INFO]
+> While `spotify-dl` doesn't require API keys for downloading, it still needs them to access Spotify metadata.
 
 1. Visit [Spotify Developer Dashboard](https://developer.spotify.com/dashboard/applications)
 2. Create a new application
