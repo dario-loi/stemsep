@@ -2,6 +2,10 @@
 
 A web application that separates audio into stems (vocals, drums, bass, guitar, other) using Demucs. Supports uploads, YouTube URLs, and Spotify links.
 
+
+![frontend](https://github.com/user-attachments/assets/4faf4b66-30e4-4164-994c-3f0b38a3aaa3)
+*A preview of the interface*
+
 ## Features
 
 - Upload audio files for stem separation
@@ -9,6 +13,7 @@ A web application that separates audio into stems (vocals, drums, bass, guitar, 
 - Extract stems from Spotify tracks
 - High-quality separation using Demucs htdemucs_6s model
 - Easy-to-use web interface built with Gradio
+
 
 ## Installation
 
