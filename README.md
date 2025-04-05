@@ -6,7 +6,7 @@ A web application that separates audio into stems (vocals, drums, bass, guitar, 
 
 - Upload audio files for stem separation
 - Extract stems from YouTube videos
-- Extract stems from Spotify tracks (no API keys needed for downloading)
+- Extract stems from Spotify tracks
 - High-quality separation using Demucs htdemucs_6s model
 - Easy-to-use web interface built with Gradio
 
