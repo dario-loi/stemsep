@@ -74,7 +74,7 @@ A web application that separates audio into stems (vocals, drums, bass, guitar, 
 
 ## Spotify API Setup
 
-> [!INFO]
+> [!NOTE]
 > While `spotify-dl` doesn't require API keys for downloading, it still needs them to access Spotify metadata.
 
 1. Visit [Spotify Developer Dashboard](https://developer.spotify.com/dashboard/applications)
