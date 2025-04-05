@@ -79,7 +79,3 @@ services:
 2. Choose a tab based on your input (Upload, YouTube, or Spotify)
 3. Provide the audio/URL and click "Process"
 4. Download the separated stems
-
-## License
-
-MIT
