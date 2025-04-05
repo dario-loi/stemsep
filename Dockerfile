@@ -16,6 +16,8 @@ ENV PYTHONUNBUFFERED=1
 RUN uv pip install --system --no-cache-dir --requirements requirements.txt 
 
 
+RUN python -c "from demucs.pretrained import get_model; model = get_model('htdemucs_6s')"
+
 COPY app.py .
 
 EXPOSE 7860

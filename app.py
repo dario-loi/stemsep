@@ -17,12 +17,13 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger('stem_separator')
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 try:
     logger.info("Loading htdemucs_6s model")
     model = get_model("htdemucs_6s")
+    logger.info(f"Model loaded on device {device}")
     model.eval()
-    logger.info(f"Model loaded successfully. Sources: {model.sources}")
 except Exception as e:
     logger.error(f"Failed to load model: {e}")
     raise
@@ -98,7 +99,7 @@ def process_audio(audio_path):
         logger.info(f"Converted to tensor: shape={audio_tensor.shape}")
         
         logger.info(f"Applying model to audio")
-        sources = apply_model(model, audio_tensor[None])[0]
+        sources = apply_model(model, audio_tensor[None], device=device, progress=True)[0]
         logger.info(f"Model applied, sources tensor shape: {sources.shape}")
         
         sources_np = sources.detach().cpu().numpy()

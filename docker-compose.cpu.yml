@@ -9,10 +9,3 @@ services:
       - "7860:7860"
     volumes:
       - ./:/app
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
