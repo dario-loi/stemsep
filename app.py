@@ -27,6 +27,36 @@ except Exception as e:
     logger.error(f"Failed to load model: {e}")
     raise
 
+def create_response(status="success", message="", paths=None, error_code=None):
+    """
+    Create a standardized response dictionary.
+    
+    Args:
+        status (str): Status of the operation ('success' or 'error')
+        message (str): Status message or error description
+        paths (dict): Dictionary containing paths to audio files
+        error_code (str, optional): Error code for better error handling
+        
+    Returns:
+        dict: Standardized response dictionary
+    """
+    if paths is None:
+        paths = {
+            "drums": None,
+            "bass": None, 
+            "other": None,
+            "vocals": None,
+            "guitar": None,
+            "original": None
+        }
+    
+    return {
+        "status": status,
+        "message": message,
+        "error_code": error_code,
+        "paths": paths
+    }
+
 def custom_save_audio(wav, path, samplerate):
     try:
         import soundfile as sf
@@ -191,61 +221,100 @@ def download_from_spotify(url):
 def process_audio_file(audio_path):
     if not audio_path:
         logger.warning("No audio path provided")
-        return None, None, None, None, None, None, "Please upload an audio file"
+        return create_response(
+            status="error", 
+            message="Please upload an audio file", 
+            error_code="NO_AUDIO_FILE"
+        )
     
     try:
         logger.info(f"Processing audio file: {audio_path}")
         stems, original_path = process_audio(audio_path)
         
-        drums_path = stems.get("drums")
-        bass_path = stems.get("bass")
-        other_path = stems.get("other")
-        vocals_path = stems.get("vocals")
-        guitar_path = stems.get("guitar")
+        paths = {
+            "drums": stems.get("drums"),
+            "bass": stems.get("bass"),
+            "other": stems.get("other"),
+            "vocals": stems.get("vocals"),
+            "guitar": stems.get("guitar"),
+            "original": original_path
+        }
         
         logger.info(f"Available stems: {list(stems.keys())}")
-        logger.info(f"Returning stems - drums: {drums_path}, bass: {bass_path}, other: {other_path}, vocals: {vocals_path}, guitar: {guitar_path}")
+        logger.info(f"Returning stems: {paths}")
         
-        return drums_path, bass_path, other_path, vocals_path, guitar_path, original_path, "Processing complete!"
+        return create_response(
+            status="success",
+            message="Processing complete!",
+            paths=paths
+        )
     except Exception as e:
         error_msg = f"Error processing audio: {str(e)}"
         logger.error(error_msg)
 
-        return None, None, None, None, None, None, error_msg
+        return create_response(
+            status="error",
+            message=error_msg,
+            error_code="PROCESSING_ERROR"
+        )
 
 def process_youtube(youtube_url):
     try:
         if not youtube_url:
-            return None, None, None, None, None, None, "Please enter a YouTube URL"
+            return create_response(
+                status="error",
+                message="Please enter a YouTube URL",
+                error_code="NO_YOUTUBE_URL"
+            )
             
         logger.info(f"Processing YouTube URL: {youtube_url}")
         audio_path = download_from_youtube(youtube_url)
         if not audio_path:
             logger.warning("Failed to download from YouTube")
-            return None, None, None, None, None, None, "Failed to download from YouTube"
+            return create_response(
+                status="error",
+                message="Failed to download from YouTube",
+                error_code="YOUTUBE_DOWNLOAD_ERROR"
+            )
         
         return process_audio_file(audio_path)
     except Exception as e:
         error_msg = f"Error processing YouTube URL: {str(e)}"
         logger.error(error_msg)
-        return None, None, None, None, None, None, error_msg
+        return create_response(
+            status="error",
+            message=error_msg,
+            error_code="YOUTUBE_PROCESSING_ERROR"
+        )
 
 def process_spotify(spotify_url):
     try:
         if not spotify_url:
-            return None, None, None, None, None, None, "Please enter a Spotify track URL"
+            return create_response(
+                status="error",
+                message="Please enter a Spotify track URL",
+                error_code="NO_SPOTIFY_URL"
+            )
             
         logger.info(f"Processing Spotify URL: {spotify_url}")
         audio_path = download_from_spotify(spotify_url)
         if not audio_path:
             logger.warning("Failed to download from Spotify")
-            return None, None, None, None, None, None, "Failed to download from Spotify"
+            return create_response(
+                status="error",
+                message="Failed to download from Spotify",
+                error_code="SPOTIFY_DOWNLOAD_ERROR"
+            )
         
         return process_audio_file(audio_path)
     except Exception as e:
         error_msg = f"Error processing Spotify URL: {str(e)}"
         logger.error(error_msg)
-        return None, None, None, None, None, None, error_msg
+        return create_response(
+            status="error",
+            message=error_msg,
+            error_code="SPOTIFY_PROCESSING_ERROR"
+        )
 
 def create_interface():
     logger.info("Creating Gradio interface")
@@ -266,6 +335,20 @@ def create_interface():
         gr.Markdown("3. Download the separated audio stems.")
         
         status_info = gr.Textbox(label="Status", interactive=False, value="Ready")
+        
+        # Helper function to extract values from response dictionary for Gradio
+        def extract_for_gradio(response):
+            paths = response.get("paths", {})
+            message = response.get("message", "")
+            return (
+                paths.get("drums"),
+                paths.get("bass"),
+                paths.get("other"),
+                paths.get("vocals"),
+                paths.get("guitar"),
+                paths.get("original"),
+                message
+            )
         
         with gr.Tab("Upload Audio File"):
             audio_input = gr.Audio(type="filepath", label="Upload Audio File")
@@ -288,7 +371,7 @@ def create_interface():
                 original_output = gr.Audio(label="Original", show_download_button=True)
             
             process_btn.click(
-                fn=process_audio_file,
+                fn=lambda x: extract_for_gradio(process_audio_file(x)),
                 inputs=[audio_input],
                 outputs=[drums_output, bass_output, other_output, vocals_output, guitar_output, original_output, status_info]
             )
@@ -314,7 +397,7 @@ def create_interface():
                 yt_original_output = gr.Audio(label="Original", show_download_button=True)
             
             yt_process_btn.click(
-                fn=process_youtube,
+                fn=lambda x: extract_for_gradio(process_youtube(x)),
                 inputs=[youtube_input],
                 outputs=[yt_drums_output, yt_bass_output, yt_other_output, yt_vocals_output, yt_guitar_output, yt_original_output, status_info]
             )
@@ -345,7 +428,7 @@ def create_interface():
                 sp_original_output = gr.Audio(label="Original", show_download_button=True)
             
             sp_process_btn.click(
-                fn=process_spotify,
+                fn=lambda x: extract_for_gradio(process_spotify(x)),
                 inputs=[spotify_input],
                 outputs=[sp_drums_output, sp_bass_output, sp_other_output, sp_vocals_output, sp_guitar_output, sp_original_output, status_info]
             )
