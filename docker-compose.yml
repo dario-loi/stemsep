@@ -1,0 +1,11 @@
+services:
+  stem-separator:
+    build: .
+    image: stem-separator
+    container_name: stem-separator
+    environment:
+      - PYTHONUNBUFFERED=1
+    ports:
+      - "7860:7860"
+    volumes:
+      - ./:/app

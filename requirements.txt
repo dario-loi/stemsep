@@ -1,0 +1,7 @@
+demucs>=4.0.0
+gradio>=3.50.0
+torch>=2.0.0
+numpy>=1.22.0
+soundfile>=0.12.0
+yt-dlp>=2023.11.14
+spotify-dl>=8.9.0
