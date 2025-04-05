@@ -41,7 +41,7 @@ A web application that separates audio into stems (vocals, drums, bass, guitar, 
 
 1. Run with Docker Compose:
    ```bash
-   docker-compose up
+   docker-compose up --build
    ```
 
 ## Spotify API Setup
