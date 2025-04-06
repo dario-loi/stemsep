@@ -11,28 +11,35 @@ A web application that separates audio into stems (vocals, drums, bass, guitar, 
 - Upload audio files for stem separation
 - Extract stems from YouTube videos
 - Extract stems from Spotify tracks
-- High-quality separation using Demucs htdemucs_6s model
+- High-quality separation using [Demucs](https://github.com/facebookresearch/demucs)' `htdemucs_6s` model
 - Easy-to-use web interface built with Gradio
 
 
 ## Installation
 
-### Option 1: Using pip
+### Option 1: Using Docker **(Best)**
 
-1. Install dependencies:
+The most convenient way to run the application is using Docker. Two commands and you're done!
+
+1. Get the latest Docker image:
    ```bash
-   pip install -r requirements.txt
+   docker pull darioloi/stemsep
    ```
 
-2. Install ffmpeg (required for audio processing):
-   - Ubuntu/Debian: `sudo apt-get install ffmpeg`
-   - macOS: `brew install ffmpeg`
-   - Windows: Download from [ffmpeg.org](https://ffmpeg.org/download.html)
-
-3. Run the application:
+2. Run the container:
    ```bash
-   python app.py
+   docker run -p 7860:7860 darioloi/stemsep
    ```
+   This will run the app without GPU support.
+
+3. If you want to use GPU acceleration, ensure you have NVIDIA Container Toolkit installed. Then run:
+   ```bash
+    docker run --gpus all -p 7860:7860 darioloi/stemsep
+    ```
+
+### Option 2: Using pip
+
+If you prefer to run the application locally, you can install it using pip. It's recommended to use a virtual environment to avoid conflicts with other packages. Also check out [uv](https://github.com/astral-sh/uv) for a better local python experience.
 
 > [!WARNING]
 > Running locally (or in a .venv) will automatically use CUDA if available. If you want to run it without GPU, change the line in `app.py`:
@@ -44,21 +51,32 @@ A web application that separates audio into stems (vocals, drums, bass, guitar, 
 > device = torch.device("cpu")
 > ```
 
-4. Access the web interface at http://localhost:7860
-
-### Option 2: Using Docker
-
-1. Build and run with Docker:
+1. Clone the repository:
    ```bash
-   docker build -t audio-stem-separator .
-   docker run -p 7860:7860 audio-stem-separator
+   git clone https://github.com/dario-loi/stemsep.git
+   cd stemsep
    ```
 
-2. If you want to use GPU acceleration, ensure you have NVIDIA Container Toolkit installed. Then run:
+2. Install dependencies:
    ```bash
-    docker build -t audio-stem-separator .
-    docker run --gpus all -p 7860:7860 audio-stem-separator
-    ```
+   pip install -r requirements.txt
+   ```
+
+3. Install ffmpeg (required for audio processing):
+   - Ubuntu/Debian: `sudo apt-get install ffmpeg`
+   - macOS: `brew install ffmpeg`
+   - Windows: Download from [ffmpeg.org](https://ffmpeg.org/download.html)
+
+4. Run the application:
+   ```bash
+   python app.py
+   ```
+
+5. Access the web interface at http://localhost:7860
+
+
+4. Access the web interface at http://localhost:7860
+
 
 ### Option 3: Using Docker Compose
 
@@ -71,6 +89,8 @@ A web application that separates audio into stems (vocals, drums, bass, guitar, 
    ```bash
    docker-compose -f docker-compose.cpu.yml up --build
    ```
+
+3. Access the web interface at http://localhost:7860
 
 ## Spotify API Setup
 
