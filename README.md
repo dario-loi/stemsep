@@ -37,6 +37,8 @@ The most convenient way to run the application is using Docker. Two commands and
     docker run --gpus all -p 7860:7860 darioloi/stemsep
     ```
 
+4. Access the web interface at http://localhost:7860
+
 ### Option 2: Using pip
 
 If you prefer to run the application locally, you can install it using pip. It's recommended to use a virtual environment to avoid conflicts with other packages. Also check out [uv](https://github.com/astral-sh/uv) for a better local python experience.
@@ -73,9 +75,6 @@ If you prefer to run the application locally, you can install it using pip. It's
    ```
 
 5. Access the web interface at http://localhost:7860
-
-
-4. Access the web interface at http://localhost:7860
 
 
 ### Option 3: Using Docker Compose
